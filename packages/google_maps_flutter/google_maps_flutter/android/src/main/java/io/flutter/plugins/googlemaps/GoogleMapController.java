@@ -579,6 +579,10 @@ final class GoogleMapController
       return;
     }
     mapView.onResume();
+      
+    if (googleMap != null) {
+      googleMap.setMapType(googleMap.getMapType());
+    }
   }
 
   @Override
