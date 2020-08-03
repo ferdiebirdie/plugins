@@ -130,8 +130,8 @@ public class Camera {
     if (enableAudio) mediaRecorder.setAudioEncoder(recordingProfile.audioCodec);
     mediaRecorder.setVideoEncoder(recordingProfile.videoCodec);
     mediaRecorder.setVideoEncodingBitRate(recordingProfile.videoBitRate);
-    if (enableAudio) mediaRecorder.setAudioEncodingBitRate(96000);
-    if (enableAudio) mediaRecorder.setAudioSamplingRate(44100);
+    if (enableAudio) mediaRecorder.setAudioSamplingRate(recordingProfile.audioSampleRate);
+    if (enableAudio) mediaRecorder.setAudioEncodingBitRate(recordingProfile.audioBitRate);
     mediaRecorder.setVideoFrameRate(recordingProfile.videoFrameRate);
     mediaRecorder.setVideoSize(recordingProfile.videoFrameWidth, recordingProfile.videoFrameHeight);
     mediaRecorder.setOutputFile(outputFilePath);
@@ -517,5 +517,24 @@ public class Camera {
             ? 0
             : (isFrontFacing) ? -currentOrientation : currentOrientation;
     return (sensorOrientationOffset + sensorOrientation + 360) % 360;
+  }
+
+ // flash
+  private final int CAMERA_FLASH_MODE_OFF = 0;
+  private final int CAMERA_FLASH_MODE_TORCH = 3;
+
+  public void setFlash(boolean value) {
+    try {
+      setFlashModeRequest(captureRequestBuilder, value ? CAMERA_FLASH_MODE_TORCH : CAMERA_FLASH_MODE_OFF);
+      CaptureRequest request = captureRequestBuilder.build();
+      cameraCaptureSession.setRepeatingRequest(request, null, null);
+    } catch (Exception e) {
+
+    }
+  }
+
+  private void setFlashModeRequest(CaptureRequest.Builder builderRequest, int mode) {
+    builderRequest.set(CaptureRequest.FLASH_MODE, mode == CAMERA_FLASH_MODE_TORCH ?
+            CameraMetadata.FLASH_MODE_TORCH :CameraMetadata.FLASH_MODE_OFF );
   }
 }
